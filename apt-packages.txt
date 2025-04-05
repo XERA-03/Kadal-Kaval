@@ -1,5 +1,4 @@
-libgl1-mesa-glx  # Critical for OpenCV
-libglib2.0-0
-libsm6
-libxext6
-libxrender1
+libgeos-dev
+proj-bin
+libproj-dev
+python3-dev

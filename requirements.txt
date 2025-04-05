@@ -2,27 +2,29 @@
 streamlit==1.32.2
 ultralytics==8.1.0  # YOLOv8 engine
 
-# Geospatial Stack
+# Geospatial Stack (TN Coastal Boundaries Enforcement)
 geocoder==1.38.1
 folium==0.14.0
 streamlit-folium==0.13.0
-shapely==2.0.1
+shapely==2.0.1; sys_platform == 'linux'  # Requires libgeos-dev
 geopy==2.3.0
 
-# Data Processing
-numpy==1.24.4
+# Data Processing (Optimized for Marine Data)
+numpy==1.26.4  # Pre-built wheel for Python 3.10
 pandas==2.0.3
-Pillow==10.0.1  # Critical for image handling
+Pillow==10.0.1  # Image handling for coastal surveillance
 
-# Machine Learning
-torch==2.0.1  # Specific version for Ultralytics compatibility
-torchvision==0.15.2
+# Machine Learning (Coastal Object Detection)
+torch==2.0.1+cu118  # CUDA 11.8 for TN GPU clusters
+torchvision==0.15.2+cu118
+--extra-index-url https://download.pytorch.org/whl/cu118
 
-# Visualization
+# Visualization (Fisheries Data Analysis)
 plotly==5.18.0
-matplotlib==3.7.2  # For backup visualizations
+matplotlib==3.7.2  # Backup for port weather charts
 
 # System Dependencies
+setuptools==68.2.2  # Replacement for deprecated distutils
 requests==2.31.0
 python-dotenv==1.0.0
-pyOpenSSL==23.2.0  # For secure API connections
+pyopenssl==23.2.0  # Secure IMD API connections
