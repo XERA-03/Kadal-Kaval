@@ -1,0 +1,14 @@
+[
+  {
+    "timestamp": "2025-03-28 00:43:48.838181",
+    "species": "Mackerel",
+    "weight": 0.1,
+    "location": "20.2724, 85.8338"
+  },
+  {
+    "timestamp": "2025-03-28 01:03:06.849214",
+    "species": "Sardine",
+    "weight": 0.1,
+    "location": "20.2724, 85.8338"
+  }
+]

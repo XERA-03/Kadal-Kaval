@@ -1,0 +1,28 @@
+# Core Framework
+streamlit==1.32.2
+ultralytics==8.1.0  # YOLOv8 engine
+
+# Geospatial Stack
+geocoder==1.38.1
+folium==0.14.0
+streamlit-folium==0.13.0
+shapely==2.0.1
+geopy==2.3.0
+
+# Data Processing
+numpy==1.24.4
+pandas==2.0.3
+Pillow==10.0.1  # Critical for image handling
+
+# Machine Learning
+torch==2.0.1  # Specific version for Ultralytics compatibility
+torchvision==0.15.2
+
+# Visualization
+plotly==5.18.0
+matplotlib==3.7.2  # For backup visualizations
+
+# System Dependencies
+requests==2.31.0
+python-dotenv==1.0.0
+pyOpenSSL==23.2.0  # For secure API connections

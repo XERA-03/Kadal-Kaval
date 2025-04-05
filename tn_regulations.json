@@ -1,0 +1,5 @@
+{
+  "fishing_ban_months": [6, 7],  // June-July ban
+  "protected_species": ["Seer Fish", "Lobsters"],
+  "coastal_districts": ["Chennai", "Nagapattinam", "Thoothukudi"]
+}
