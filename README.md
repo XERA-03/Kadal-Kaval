@@ -3,7 +3,7 @@
 ## Executive Summary  
 **Kadal Kaval** is a Streamlit-based web app designed to empower Tamil Nadu’s traditional coastal fishermen with AI-driven decision support. It integrates real-time satellite weather and ocean data with on-device computer vision (YOLOv8) to detect fish species, estimate catch size, and guide fishing trips safely and sustainably. The system provides features like *real-time weather/ocean alerts*, *fishing ban checks*, *fuel & emission estimators*, and *catch analytics*. It targets low-connectivity coastal scenarios, delivering an intuitive English/தமிழ் (Tamil) interface for local users. The architecture is modular: a **frontend** (Streamlit) interacts with **backend services** (weather/ocean APIs, species databases, YOLO inference) and a **geospatial module** (Folium map) for navigation. Critical secrets (API keys) are managed via Streamlit’s built-in secrets management. The project is ready for cloud deployment (Streamlit Cloud, Docker, AWS/GCP) with CI/CD support.  
 
-This report and README include: an in-depth problem statement, system architecture diagrams (Mermaid), detailed features, API usage, model info (YOLOv8), deployment guides, usage examples, testing plan, and governance (privacy, licensing, etc). All technical claims and APIs are referenced to official sources (e.g. Ultralytics and weather service docs)【5†L258-L266】【15†L371-L378】【32†L63-L67】.
+This report and README include: an in-depth problem statement, system architecture diagrams (Mermaid), detailed features, API usage, model info (YOLOv8), deployment guides, usage examples, testing plan, and governance (privacy, licensing, etc). All technical claims and APIs are referenced to official sources (e.g. Ultralytics and weather service docs)【1】【2】【3】.
 
 ---
 
@@ -35,9 +35,9 @@ These issues lead to safety hazards, low catch yield, and economic stress. Kadal
 
 ## 🌟 Key Features
 
-1. **Fish Detection (YOLOv8)**: Upload a photo of the catch or sonar image. The app runs a **YOLOv8n** (nano) model to identify fish species and count them. It outputs bounding boxes with species labels and confidence scores. (Currently using the default pretrained weights; we plan custom training on a marine dataset to improve accuracy【15†L312-L320】【15†L371-L378】.)  
+1. **Fish Detection (YOLOv8)**: Upload a photo of the catch or sonar image. The app runs a **YOLOv8n** (nano) model to identify fish species and count them. It outputs bounding boxes with species labels and confidence scores. (Currently using the default pretrained weights; we plan custom training on a marine dataset to improve accuracy【4】【2】.)  
 
-2. **Real-Time Weather Data**: Fetches live weather from OpenWeather’s API (endpoint `api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={APIkey}`)【5†L258-L266】. Displays temperature, wind speed/direction, and conditions (e.g. “Clear Sky”). This uses a secret API key (in `.streamlit/secrets.toml`). Free tier limit: 60 calls/minute, 1,000,000 per month【7†L689-L697】.  
+2. **Real-Time Weather Data**: Fetches live weather from OpenWeather’s API (endpoint `api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={APIkey}`)【1】. Displays temperature, wind speed/direction, and conditions (e.g. “Clear Sky”). This uses a secret API key (in `.streamlit/secrets.toml`). Free tier limit: 60 calls/minute, 1,000,000 per month【5】.  
 
 3. **Ocean Conditions (IMD API)**: Queries the India Meteorological Department’s marine API (e.g. `api.imd.gov.in/api/v1/coastalbulletin`) for wave height and coastal bulletins. Example (Tamil Nadu coast):  
    ```json
@@ -45,7 +45,7 @@ These issues lead to safety hazards, low catch yield, and economic stress. Kadal
      "Weather": "Isolated Rain", 
      "Sea Condition": "Smooth to Slight", … }
    ```  
-   (IMD requires an API key). These data inform safety alerts (e.g. high waves). Example JSON fields are shown in IMD docs【35†L701-L709】.  
+   (IMD requires an API key). These data inform safety alerts (e.g. high waves). Example JSON fields are shown in IMD docs【6】.  
 
 4. **Coastal Map Navigation**: Uses **Folium** (Leaflet) to plot the Tamil Nadu coastline polygon and the user’s GPS location (via `geocoder.ip('me')`). This visualizes boundaries to prevent crossing into Sri Lankan waters.  
 
@@ -53,11 +53,11 @@ These issues lead to safety hazards, low catch yield, and economic stress. Kadal
 
 6. **Fish Movement Prediction**: A simple model combines wind/ocean currents (e.g. from OpenWeather and IMD data) to suggest likely fish-bearing coordinates. (Uses basic geopy vectors - details in code comments.)  
 
-7. **Fuel & Emissions Calculator**: Based on user-input trip distance and boat fuel type/efficiency, it estimates fuel usage and CO₂ emissions (using standard fuel-carbon factors). It may also call an API (e.g. **Alpha Vantage Carbon Intensity** or static coefficients). (Alpha Vantage free limit: 5 calls/min, 25/day【32†L63-L67】.)  
+7. **Fuel & Emissions Calculator**: Based on user-input trip distance and boat fuel type/efficiency, it estimates fuel usage and CO₂ emissions (using standard fuel-carbon factors). It may also call an API (e.g. **Alpha Vantage Carbon Intensity** or static coefficients). (Alpha Vantage free limit: 5 calls/min, 25/day【3】.)  
 
 8. **Catch Analytics Dashboard**: Integrates **Plotly** charts to show historical catch logs (`catch_logs.json` sample data). Example metrics: “Fish count per trip” or “Monthly catch weight trends”.  
 
-9. **Species Info**: On detection, looks up species status from the **IUCN Red List API** and **FishBase**. For instance, after identifying “Indian Mackerel”, it queries IUCN (`api.iucnredlist.org/api/v4/species/{ID}`) and FishBase (`https://fishbase.ropensci.org/species?Genus=Mackerel&Species=Indian`). (IUCN requires Bearer token【24†L49-L52】; FishBase (ropensci) API is open GET【28†L142-L149】.)  
+9. **Species Info**: On detection, looks up species status from the **IUCN Red List API** and **FishBase**. For instance, after identifying “Indian Mackerel”, it queries IUCN (`api.iucnredlist.org/api/v4/species/{ID}`) and FishBase (`https://fishbase.ropensci.org/species?Genus=Mackerel&Species=Indian`). (IUCN requires Bearer token【7】; FishBase (ropensci) API is open GET【8】.)  
 
 10. **Multilingual UI**: Built with Streamlit widgets; supports English and Tamil text for instructions and alerts.  
 
@@ -66,7 +66,7 @@ These issues lead to safety hazards, low catch yield, and economic stress. Kadal
 Each feature is modularized in code (see `fishnet_tn.py`). For example, the YOLO detection block: 
 
 ```python
-model = YOLO("yolov8n.pt")           # Load pretrained YOLOv8 nano model【15†L312-L320】
+model = YOLO("yolov8n.pt")           # Load pretrained YOLOv8 nano model【4】
 results = model("path/to/image.jpg") # Inference; returns bounding box info
 for r in results:
     boxes = r.boxes  # contains coords, class, confidence
@@ -119,7 +119,7 @@ flowchart LR
 ```
 
 - **User & UI**: The Streamlit frontend (mobile-optimized layout) receives inputs (image uploads, location, user selections) and displays outputs (maps, charts, alerts).  
-- **Model (YOLOv8)**: The core AI engine; hosted locally in the app code as a PyTorch model file (`yolov8n.pt`). It loads once and infers per request【15†L312-L320】.  
+- **Model (YOLOv8)**: The core AI engine; hosted locally in the app code as a PyTorch model file (`yolov8n.pt`). It loads once and infers per request【4】.  
 - **External APIs**: Live calls to OpenWeather, IMD, IUCN, FishBase (and optionally AlphaVantage) for dynamic data. These are accessed via `requests` with stored API keys.  
 - **Static Data**: Local JSON files for Tamil Nadu fishing regulations and sample catch logs. These feed into ban-check and analytics.  
 - **Interactions**: For example, on each image upload, the UI sends it to YOLO for detection and simultaneously queries species databases; it also periodically polls weather/ocean services based on GPS or user-entered coords.  
@@ -152,9 +152,9 @@ This data flow ensures timely updates: as soon as an image is uploaded, the AI a
 
 ## 🐟 Model Details (YOLOv8)  
 
-- **Architecture**: We use **YOLOv8n (Nano)**, a state-of-the-art anchor-free object detector from Ultralytics (2023)【15†L371-L378】. YOLOv8 introduces a new backbone and neck optimized for speed and accuracy【15†L371-L378】. It outputs bounding boxes and class labels directly (no separate NMS step).  
-- **Weights**: The repo includes `yolov8n.pt` – the **pretrained COCO** weights, loaded via `YOLO("yolov8n.pt")`【15†L312-L320】. No custom training was done (due to lack of labeled marine images); this is a key gap. In practice, a custom dataset (~10,000+ underwater images across relevant fish species) would greatly improve performance. (The project report mentions a plan of 24 classes【10†L0】, but our current model is generic COCO with primarily everyday objects.)  
-- **Inference**: We set `model.conf = 0.6` to filter detections by confidence. Inference speed is fast (YOLOv8n on an average CPU can process an image in ~50-100 ms【15†L371-L378】, enabling real-time feel).  
+- **Architecture**: We use **YOLOv8n (Nano)**, a state-of-the-art anchor-free object detector from Ultralytics (2023)【2】. YOLOv8 introduces a new backbone and neck optimized for speed and accuracy【2】. It outputs bounding boxes and class labels directly (no separate NMS step).  
+- **Weights**: The repo includes `yolov8n.pt` – the **pretrained COCO** weights, loaded via `YOLO("yolov8n.pt")`【4】. No custom training was done (due to lack of labeled marine images); this is a key gap. In practice, a custom dataset (~10,000+ underwater images across relevant fish species) would greatly improve performance. (The project report mentions a plan of 24 classes【9】, but our current model is generic COCO with primarily everyday objects.)  
+- **Inference**: We set `model.conf = 0.6` to filter detections by confidence. Inference speed is fast (YOLOv8n on an average CPU can process an image in ~50-100 ms【2】, enabling real-time feel).  
 - **Output**: For each detection, the app displays species name (class), confidence %, and a crude size estimate (based on bounding box area and assumed distance).  
 
 **Note**: Users should be aware that, without retraining, YOLOv8n may miss or misclassify some fish. We plan to fine-tune on local species images in future work. 
@@ -167,10 +167,10 @@ Kadal Kaval integrates several external services. Below is a summary of each:
 
 | API / Service       | Purpose                           | Endpoint Example                                                   | Auth                     | Limits / Notes                    |
 |---------------------|-----------------------------------|--------------------------------------------------------------------|--------------------------|-----------------------------------|
-| **OpenWeather**     | Current weather (temp, wind, cond.) | `https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={APIkey}`【5†L258-L266】 | `appid` (API key in URL) | Free: 60 calls/min, 1,000,000/mo【7†L689-L697】 |
-| **India Met Dept (IMD)** | Ocean/coastal data (waves, forecasts) | `https://api.imd.gov.in/api/v1/coastalbulletin?id=...` (e.g. daily coastal bulletin)【35†L701-L709】 | `key` (API key param) | Free tier details not public; follow IMD guidelines. |
-| **IUCN Red List**   | Species conservation status       | Base: `https://api.iucnredlist.org/api/v4`<br>Example: `/countries/IN?latest=true`【24†L45-L52】 | Bearer token in HTTP header or `Authorization: Bearer {key}`【24†L49-L52】 | Rate-limited; use ~0.5s delay between calls【21†L79-L85】. |
-| **FishBase**        | Species info (biology, distribution) | `https://fishbase.ropensci.org/species?Genus={Genus}&Species={Species}`【28†L93-L100】 | None (open GET) | Unlimited (public RESTful API)【28†L142-L149】. |
+| **OpenWeather**     | Current weather (temp, wind, cond.) | `https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={APIkey}`【1】 | `appid` (API key in URL) | Free: 60 calls/min, 1,000,000/mo【5】 |
+| **India Met Dept (IMD)** | Ocean/coastal data (waves, forecasts) | `https://api.imd.gov.in/api/v1/coastalbulletin?id=...` (e.g. daily coastal bulletin)【6】 | `key` (API key param) | Free tier details not public; follow IMD guidelines. |
+| **IUCN Red List**   | Species conservation status       | Base: `https://api.iucnredlist.org/api/v4`<br>Example: `/countries/IN?latest=true`【10】 | Bearer token in HTTP header or `Authorization: Bearer {key}`【7】 | Rate-limited; use ~0.5s delay between calls【11】. |
+| **FishBase**        | Species info (biology, distribution) | `https://fishbase.ropensci.org/species?Genus={Genus}&Species={Species}`【12】 | None (open GET) | Unlimited (public RESTful API)【8】. |
 | **WoRMS**           | Taxonomic lookup (common names)  | `https://www.marinespecies.org/rest/AphiaIDByName/{scientificName}` | None (open GET) | Public API at marinespecies.org【39†L64-L69】. |
 | **Alpha Vantage**   | (Optional) CO₂ intensity or finance data | e.g. `https://www.alphavantage.co/query?function=CO2_EMISSIONS&apikey={APIkey}` | `apikey` (in URL)     | Free: 5 calls/min, 25 calls/day【32†L63-L67】 (upgrade for more). |
 | **Geocoding** (built-in) | Convert addresses/ZIP to lat/lon (if needed) | (Streamlit builtin or OpenWeather geocode)     | N/A                      | Use only if needed (OpenWeather’s Geocoding API is free with key). |
@@ -224,13 +224,13 @@ pip install -r requirements.txt
 ### 4. Configure API Keys (Secrets)  
 Create a file `.streamlit/secrets.toml` with your API keys (this file is excluded from Git). For example:  
 ```toml
-OPENWEATHER_API_KEY = "YOUR_OPENWEATHER_KEY"
-IUCN_API_KEY        = "YOUR_IUCN_KEY"
-FISHBASE_API_KEY    = "YOUR_FISHBASE_KEY"
-ALPHA_VANTAGE_KEY   = "YOUR_ALPHA_VANTAGE_KEY"
-IMD_API_KEY         = "YOUR_IMD_KEY"
+OPENWEATHER_API_KEY = "OPENWEATHER_KEY"
+IUCN_API_KEY        = "IUCN_KEY"
+FISHBASE_API_KEY    = "FISHBASE_KEY"
+ALPHA_VANTAGE_KEY   = "ALPHA_VANTAGE_KEY"
+IMD_API_KEY         = "IMD_KEY"
 ```
-In the Streamlit code, access these via `st.secrets["OPENWEATHER_API_KEY"]`【46†L200-L208】. Do **not** commit `secrets.toml`; it should be secured.  
+In the Streamlit code, access these via `st.secrets["OPENWEATHER_API_KEY"]`【14】. Do **not** commit `secrets.toml`; it should be secured.  
 > **Env Vars (Optional):** Alternatively, you can use environment variables and `python-dotenv`, or Streamlit’s Cloud secrets management (the above approach is recommended).
 
 ### 5. Run the App  
@@ -292,7 +292,7 @@ Below are illustrative use-cases. (In the actual app, these are performed via th
   This is fetched from OpenWeather at the current coordinates. If `wind_speed > 20 km/h`, the app triggers a warning banner.
 
 - **Ban Warning:** On June 20, the app would show a banner:  
-  > ⚠️ *Fishing is banned from June 15 to August 15*【10†L0】.
+  > ⚠️ *Fishing is banned from June 15 to August 15【9】.
 
 - **Catch Analytics:** In “Analytics” tab, an example bar chart of fish count per trip is rendered using Plotly. (Data from `catch_logs.json`.)
 
@@ -417,7 +417,7 @@ These tests can be run with `pytest` (to be added to the project) and should cov
 
 - **Detection Accuracy**: Since we use an off-the-shelf YOLOv8n (pretrained on COCO), empirical accuracy on marine images is unknown. **Evaluation plan:** Manually label a test set of fish images and compute precision/recall and mean Average Precision (mAP). YOLOv8n (640) achieves ~33% mAP on COCO (general objects)【15†L312-L320】, but expect lower values on fish without fine-tuning. As a baseline, even coarse detection (e.g. “fish vs. non-fish”) can improve with transfer learning.
 
-- **Inference Latency**: Measure model forward-pass time on target hardware (e.g. Jetson Nano or a smartphone). YOLOv8n is optimized for speed: published benchmarks show ~50 FPS on modern GPUs【15†L371-L378】 (centroid inference). On a typical CPU it should still run under 200 ms per image. This ensures a responsive UI.
+- **Inference Latency**: Measure model forward-pass time on target hardware (e.g. Jetson Nano or a smartphone). YOLOv8n is optimized for speed: published benchmarks show ~50 FPS on modern GPUs【2】 (centroid inference). On a typical CPU it should still run under 200 ms per image. This ensures a responsive UI.
 
 - **API Performance**: Each external API call has latency (typically 100–500 ms). We cache some (weather every 5 minutes, etc.) to avoid slowdowns. Total app response (image + data fetch) should remain interactive.
 
@@ -430,7 +430,7 @@ No quantitative results are yet available; the above outlines how we would valid
 ## 🔒 Data Privacy & Security
 
 - **User Data:** The app does **not store personal data**. Uploaded images are processed in-memory and not saved to disk or server. Location data (IP-based) is used transiently for weather/ocean lookups only.  
-- **API Keys:** Sensitive keys are never hard-coded. We use Streamlit’s secrets (`.streamlit/secrets.toml`) or environment variables to keep them out of version control【46†L200-L208】. For CI/CD, use GitHub Actions secrets or platform-managed secrets.  
+- **API Keys:** Sensitive keys are never hard-coded. We use Streamlit’s secrets (`.streamlit/secrets.toml`) or environment variables to keep them out of version control【14】. For CI/CD, use GitHub Actions secrets or platform-managed secrets.  
 - **Network Security:** All API calls use HTTPS. There is no authentication of users in this prototype, so it is assumed a trusted deployment (if deployed publicly, consider adding login or token access).  
 - **Data Storage:** The only persistent data (`catch_logs.json`, if used) should be treated carefully. In production, use encrypted cloud storage or a secure database. The sample catch logs provided have no PII.  
 - **Regulatory Compliance:** If deployed at scale, ensure compliance with local and international data laws (e.g. do not log IPs if not needed, clearly state data usage).  
@@ -476,7 +476,7 @@ Planned enhancements to elevate Kadal Kaval:
 - **Custom Model Training:** Collect local fish images and train YOLOv8 on a marine-specific dataset. This will vastly improve detection accuracy.  
 - **Offline Mode:** Cache critical data (maps, forecasts) for operations without connectivity. Use on-device ML and data sync when back online.  
 - **Drone Integration:** Support images from drones (UAVs) for fish schools mapping.  
-- **Voice Assistance:** Integrate speech input/output (in Tamil), leveraging tools like [Xera](https://xera.ai) or Streamlit’s voice widgets, for hands-free operation.  
+- **Voice Assistance:** Integrate speech input/output (in Tamil), leveraging tools, for hands-free operation.  
 - **Advanced Analytics:** More charts (e.g. CO₂ savings from optimized routes, catch forecasting).  
 - **Expansion:** Scale to other coastal regions (Kerala, Puducherry, etc.) by parameterizing location and regulations.  
 
@@ -485,14 +485,36 @@ Planned enhancements to elevate Kadal Kaval:
 ---
 
 ## References
+[1] Current weather data
+https://openweathermap.org/api/current
+[2] [4] Explore Ultralytics YOLOv8 - Ultralytics YOLO Docs
+https://docs.ultralytics.com/models/yolov8/
+[3] Alpha Vantage API Request Limits - Macroption
+https://www.macroption.com/alpha-vantage-api-limits/
+[5] Pricing
+https://openweathermap.org/price
+[6] IMD API Reference
+https://api.imd.gov.in/public/api_reference.html
+[7] [10] New way to get a list of species by country from IUCN | FLORENCIA GRATTAROLA
+https://flograttarola.com/post/species-by-country-iucn_v4/
+[8] [12] API Reference
+https://ropensci.github.io/fishbaseapidocs/
+[9] Home - Ultralytics YOLO Docs
+https://docs.ultralytics.com/
+[11] An R package for the IUCN Red List API • iucnredlist
+https://iucn-uk.github.io/iucnredlist/
+[13] WoRMS - World Register of Marine Species
+https://www.marinespecies.org/rest/
+[14] secrets.toml - Streamlit Docs
+https://docs.streamlit.io/develop/api-reference/connections/secrets.toml
 
-- Ultralytics YOLOv8 documentation【15†L312-L320】【15†L371-L378】 – model usage and architecture.  
-- OpenWeather Current Weather API Guide【5†L258-L266】【7†L689-L697】 – endpoints and rate limits.  
-- IUCN Red List API (v4)【24†L45-L52】【21†L79-L85】 – authentication and rate limiting.  
-- FishBase API (rOpenSci)【28†L93-L100】【28†L142-L149】 – endpoints, no auth required.  
-- IMD Ocean/Coastal Data (India Meteorological Dept)【35†L701-L709】 – sample coastal bulletin data.  
-- Alpha Vantage Limits【32†L63-L67】 – call frequency constraints.  
-- Streamlit Secrets Management【46†L200-L208】 – `secrets.toml` usage example.  
+- Ultralytics YOLOv8 documentation【4】【2】 – model usage and architecture.  
+- OpenWeather Current Weather API Guide【1】【5】 – endpoints and rate limits.  
+- IUCN Red List API (v4)【10】【11】 – authentication and rate limiting.  
+- FishBase API (rOpenSci)【12】【8】 – endpoints, no auth required.  
+- IMD Ocean/Coastal Data (India Meteorological Dept)【6】 – sample coastal bulletin data.  
+- Alpha Vantage Limits【3】 – call frequency constraints.  
+- Streamlit Secrets Management【14】 – `secrets.toml` usage example.  
 - [Other official docs as cited above.]  
 
 *(All citations are from official API or library documentation to ensure accuracy. If a required detail was unavailable in docs, it is noted as assumed. )*
