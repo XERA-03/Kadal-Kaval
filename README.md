@@ -495,28 +495,17 @@ Planned enhancements to elevate Kadal Kaval:
 ---
 
 ## References
-[1] Current weather data
-https://openweathermap.org/api/current
-[2] [4] Explore Ultralytics YOLOv8 - Ultralytics YOLO Docs
-https://docs.ultralytics.com/models/yolov8/
-[3] Alpha Vantage API Request Limits - Macroption
-https://www.macroption.com/alpha-vantage-api-limits/
-[5] Pricing
-https://openweathermap.org/price
-[6] IMD API Reference
-https://api.imd.gov.in/public/api_reference.html
-[7] [10] New way to get a list of species by country from IUCN | FLORENCIA GRATTAROLA
-https://flograttarola.com/post/species-by-country-iucn_v4/
-[8] [12] API Reference
-https://ropensci.github.io/fishbaseapidocs/
-[9] Home - Ultralytics YOLO Docs
-https://docs.ultralytics.com/
-[11] An R package for the IUCN Red List API • iucnredlist
-https://iucn-uk.github.io/iucnredlist/
-[13] WoRMS - World Register of Marine Species
-https://www.marinespecies.org/rest/
-[14] secrets.toml - Streamlit Docs
-https://docs.streamlit.io/develop/api-reference/connections/secrets.toml
+[1] Current weather data - https://openweathermap.org/api/current
+[2] [4] Explore Ultralytics YOLOv8 - Ultralytics YOLO Docs - https://docs.ultralytics.com/models/yolov8/
+[3] Alpha Vantage API Request Limits - Macroption - https://www.macroption.com/alpha-vantage-api-limits
+[5] Pricing - https://openweathermap.org/price
+[6] IMD API Reference - https://api.imd.gov.in/public/api_reference.html
+[7] [10] New way to get a list of species by country from IUCN | FLORENCIA GRATTAROLA - https://flograttarola.com/post/species-by-country-iucn_v4/
+[8] [12] API Reference - https://ropensci.github.io/fishbaseapidocs/
+[9] Home - Ultralytics YOLO Docs - https://docs.ultralytics.com/
+[11] An R package for the IUCN Red List API • iucnredlist - https://iucn-uk.github.io/iucnredlist/
+[13] WoRMS - World Register of Marine Species - https://www.marinespecies.org/rest/
+[14] secrets.toml - Streamlit Docs - https://docs.streamlit.io/develop/api-reference/connections/secrets.toml
 
 - Ultralytics YOLOv8 documentation【4】【2】 – model usage and architecture.  
 - OpenWeather Current Weather API Guide【1】【5】 – endpoints and rate limits.  
