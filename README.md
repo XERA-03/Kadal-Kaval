@@ -87,6 +87,7 @@ condition = data["weather"][0]["description"]
 ---
 
 ## 📈 System Architecture  
+```mermaid
 flowchart LR
     %% High-level system components and data flow
     subgraph Frontend (Streamlit UI)
