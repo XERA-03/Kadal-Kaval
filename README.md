@@ -88,33 +88,44 @@ condition = data["weather"][0]["description"]
 
 ## 📈 System Architecture  
 ```mermaid
-flowchart LR
-    %% High-level system components and data flow
-    subgraph Frontend (Streamlit UI)
-        U[User]
-        UI[Streamlit App]
-    end
-    subgraph Backend Services
-        YOLO[YOLOv8 Model]
-        FISHDB[FISHDATA (IUCN/FishBase APIs)]
-        WX[Weather API (OpenWeather)]
-        OCN[Ocean API (IMD)]
-    end
-    subgraph Data[Static Data]
-        REGS["tn_regulations.json"]
-        LOGS["catch_logs.json"]
-    end
-    U -->|upload image or click| UI
-    UI -->|call model| YOLO
-    UI -->|fetch data| WX
-    UI -->|fetch data| OCN
-    UI -->|lookup species| FISHDB
-    UI -->|read| REGS
-    UI -->|read/write| LOGS
-    YOLO -->|return detections| UI
-    WX -->|return weather| UI
-    OCN -->|return ocean conditions| UI
-    FISHDB -->|return species info| UI
+flowchart TD
+
+    A[User / Fisherman] --> B[Streamlit Web App UI]
+
+    B --> C[Upload Image]
+    B --> D[Get Location]
+    B --> E[Input Trip Details]
+
+    %% AI Processing
+    C --> F[YOLOv8 Model]
+    F --> G[Fish Detection Results]
+
+    %% APIs
+    D --> H[Weather API - OpenWeather]
+    D --> I[Ocean API - IMD]
+
+    %% Internal Logic
+    B --> J[Fishing Ban Checker]
+    B --> K[Fuel & Emission Calculator]
+    B --> L[Fish Movement Predictor]
+
+    %% Data Files
+    J --> M[tn_regulations.json]
+    K --> N[Emission Factors]
+    L --> O[Weather + Ocean Data]
+
+    %% Output
+    G --> P[Display Detection]
+    H --> Q[Weather Info]
+    I --> R[Ocean Conditions]
+    L --> S[Suggested Fishing Location]
+
+    P --> T[User Dashboard]
+    Q --> T
+    R --> T
+    S --> T
+    J --> T
+    K --> T
 ```
 
 - **User & UI**: The Streamlit frontend (mobile-optimized layout) receives inputs (image uploads, location, user selections) and displays outputs (maps, charts, alerts).  
